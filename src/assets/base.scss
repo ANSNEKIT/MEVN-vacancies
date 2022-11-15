@@ -1,0 +1,86 @@
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+  
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-background);
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 400;
+
+    color-scheme: light dark;
+    color: #030303;
+    background-color: #f9fafb;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+
+    box-sizing: border-box;
+
+    scrollbar-color: #4A92F6 #e0e0e0;
+    scrollbar-width: thin;
+}
+
+#app {
+    width: 100%;
+    height: 100vh;
+    min-height: 100%;
+}
+
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 12px;
+    position: absolute;
+}
+
+::-webkit-scrollbar:horizontal {
+    height: 20px;
+}
+
+::-webkit-scrollbar-track {
+    //box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #4A92F6;
+    border-radius: 6px;
+
+    &:hover {
+        background-color: #2c70ce;
+    }
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+    height: 8px;
+    width: 8px;
+    border-radius: 12px 12px 20px 20px;
+}
