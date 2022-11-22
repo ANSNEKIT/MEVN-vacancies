@@ -1,61 +1,75 @@
 <template>
-    <b-card tag="section" class="vacancy-card" :img-src="src" img-alt="Card image" img-top>
-        <b-card-body class="vacancy-card__body">
-            <div class="vacancy-card__date">
-                <time datetime="2022-11-08T08:23:44+03:00" class="basic-date">8 ноября 2022 </time>
-            </div>
-            <div class="vacancy-card__flex-wrap">
-                <RouterLink to="/" class="vacancy-card__icon-link"
-                    ><b-img
-                        :src="userProfileImg"
-                        :alt="'Логотип компании ' + name"
-                        width="60"
-                        height="60"
-                        blank-color="blue"
-                        rounded="circle"
-                        class="vacancy-card__icon"
-                    >
-                    </b-img
-                ></RouterLink>
-                <div class="vacancy-card__info">
-                    <div class="vacancy-card__company">
-                        <h3 class="vacancy-card__company-title">
-                            <RouterLink :to="'/companies/' + link">Иннотех</RouterLink>
-                        </h3>
-                    </div>
-                    <h2 class="vacancy-card__title">
-                        <RouterLink :to="'/vacancies/' + id" class="vacancy-card__title-link">{{
-                            vacancy.name
-                        }}</RouterLink>
-                    </h2>
-                    <ul class="vacancy-card__meta">
-                        <li class="vacancy-card__meta-item">{{ vacancy.city }}</li>
-                        <li class="vacancy-card__meta-item">{{ vacancy.employmentType }}</li>
-                        <li v-if="vacancy.hasRemote" class="vacancy-card__meta-item">
-                            Доступна удаленка
-                        </li>
-                    </ul>
-                    <div v-if="price" class="vacancy-card__salary">
-                        <div class="basic-salary">{{ price }}</div>
-                    </div>
-                    <b-card-text>
-                        {{ vacancy.description }}
-                    </b-card-text>
-                    <b-card-text> Публикация доступна до: {{ vacancy.timeEnd }} </b-card-text>
+    <div>
+        <b-card tag="section" class="vacancy-card" :img-src="src" img-alt="Card image" img-top>
+            <b-card-body class="vacancy-card__body">
+                <div class="vacancy-card__date">
+                    <time datetime="2022-11-08T08:23:44+03:00" class="basic-date"
+                        >8 ноября 2022
+                    </time>
+                </div>
+                <div class="vacancy-card__flex-wrap">
+                    <RouterLink to="/" class="vacancy-card__icon-link"
+                        ><b-img
+                            :src="userProfileImg"
+                            :alt="'Логотип компании ' + name"
+                            width="60"
+                            height="60"
+                            blank-color="blue"
+                            rounded="circle"
+                            class="vacancy-card__icon"
+                        >
+                        </b-img
+                    ></RouterLink>
+                    <div class="vacancy-card__info">
+                        <div class="vacancy-card__company">
+                            <h3 class="vacancy-card__company-title">
+                                <RouterLink :to="'/companies/' + link">Иннотех</RouterLink>
+                            </h3>
+                        </div>
+                        <h2 class="vacancy-card__title">
+                            <RouterLink :to="'/vacancies/' + id" class="vacancy-card__title-link">{{
+                                vacancy.name
+                            }}</RouterLink>
+                        </h2>
+                        <ul class="vacancy-card__meta">
+                            <li class="vacancy-card__meta-item">{{ vacancy.city }}</li>
+                            <li class="vacancy-card__meta-item">{{ vacancy.employmentType }}</li>
+                            <li v-if="vacancy.hasRemote" class="vacancy-card__meta-item">
+                                Доступна удаленка
+                            </li>
+                        </ul>
+                        <div v-if="price" class="vacancy-card__salary">
+                            <div class="basic-salary">{{ price }}</div>
+                        </div>
+                        <b-card-text>
+                            {{ vacancy.description }}
+                        </b-card-text>
+                        <b-card-text> Публикация доступна до: {{ vacancy.timeEnd }} </b-card-text>
 
-                    <div class="vacancy-card__buttons">
-                        <b-button variant="secondary">Редактировать</b-button>
-                        <b-button variant="danger">Удалить</b-button>
+                        <div class="vacancy-card__buttons">
+                            <b-button variant="secondary" @click="$emit('editCard', id)"
+                                >Редактировать</b-button
+                            >
+                            <b-button variant="danger" @click="showRemoveModal = !showRemoveModal"
+                                >Удалить</b-button
+                            >
+                        </div>
                     </div>
                 </div>
-            </div>
-        </b-card-body>
-    </b-card>
+            </b-card-body>
+        </b-card>
+        <ModalVacancyForm v-model="showModalEdit" :vacancy="vacancy" :is-edit="true" />
+        <b-modal v-model="showRemoveModal" @ok="$emit('removeCard', id)"
+            >Удалить вакансию "{{ vacancy.name }}"</b-modal
+        >
+    </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import type { VacancyFull } from '@/entities/vacancy'
+import { computed, ref, type PropType } from 'vue'
 import { RouterLink } from 'vue-router'
+import ModalVacancyForm from './ModalVacancyForm.vue'
 
 const props = defineProps({
     id: {
@@ -63,10 +77,16 @@ const props = defineProps({
         required: true,
     },
     vacancy: {
-        type: Object,
+        type: Object as PropType<VacancyFull>,
         default: () => ({}),
     },
 })
+
+defineEmits(['removeCard', 'editCard'])
+
+const showRemoveModal = ref(false)
+const showModalEdit = ref(false)
+
 const userProfileImg = computed(() => `https://source.unsplash.com/random/60x60?sig=${props.id}`)
 
 const name = computed(() => props.vacancy.company.name)

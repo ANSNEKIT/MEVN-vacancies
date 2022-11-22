@@ -16,8 +16,24 @@
                 </b-row>
             </section>
         </b-container>
+
         <b-container>
-            <VacancyCard id="1" :vacancy="vacancy" class="mb-5" />
+            <div class="mb-4 d-flex justify-content-end">
+                <b-button pill variant="primary" size="lg" @click="showModalEdit = true"
+                    >Создать</b-button
+                >
+            </div>
+            <ModalVacancyForm v-model:isShow="showModalEdit" @submitForm="onCreate" />
+        </b-container>
+
+        <b-container>
+            <VacancyCard
+                id="1"
+                :vacancy="vacancy"
+                class="mb-5"
+                @edit-card="onEditCard"
+                @remove-card="onRemovedCard"
+            />
         </b-container>
 
         <b-container>
@@ -34,22 +50,39 @@
 </template>
 
 <script setup lang="ts">
+import ModalVacancyForm from '@/components/ModalVacancyForm.vue'
 import VacancyCard from '@/components/VacancyCard.vue'
+import type { Vacancy } from '@/entities/vacancy'
 import { ref } from 'vue'
 
 const vacancy = {
     company: {
-        src: 'https://dummyimage.com/1300x150/499efa/ffffff&text=Text+asdfljk+ljsadfgjsdgsg+dsldkfj+wejtklk',
         name: 'Test company',
         link: 'TestCompany',
+        src: 'https://dummyimage.com/1300x150/499efa/ffffff&text=Text+asdfljk+ljsadfgjsdgsg+dsldkfj+wejtklk',
     },
     name: 'Phyton Developer',
     city: 'Москва',
     employmentType: 'Полный день',
     hasRemote: true,
-    minPrice: 10_000,
+    minPrice: 10000,
+    maxPrice: 15000,
     description: 'asdfsad sadf sadf jasljss',
-    timeEnd: '16315651',
+    dateEnd: '2022-11-25',
+    timeEnd: '12:00',
+    dateTimeEnd: new Date('2022-11-22T12:00'),
+}
+
+const showModalEdit = ref(false)
+
+const onRemovedCard = (id: string) => {
+    console.log(id)
+}
+const onEditCard = (vacancy: Vacancy) => {
+    console.log(vacancy)
+}
+const onCreate = (vacancy: Vacancy) => {
+    console.log('4444', vacancy)
 }
 
 const selectedSort = ref<string>('')
