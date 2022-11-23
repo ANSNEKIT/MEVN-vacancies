@@ -1,4 +1,4 @@
-export interface Vacancy {
+export interface IVacancy {
     _id: string
     company: {
         src: string
@@ -18,7 +18,7 @@ export interface Vacancy {
     dateTimeEnd?: Date
 }
 
-export interface VacancyBackend extends Vacancy {
+export interface IBVacancy extends IVacancy {
     createdAt: Date
     dateTimeEnd: Date
 }

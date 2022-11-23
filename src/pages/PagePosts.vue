@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import ModalVacancyForm from '@/components/ModalVacancyForm.vue'
 import VacancyCard from '@/components/VacancyCard.vue'
-import type { Vacancy } from '@/entities/vacancy'
+import type { IVacancy } from '@/entities/vacancy'
 import { ref } from 'vue'
 
 const vacancy = {
@@ -82,10 +82,10 @@ const showModalEdit = ref(false)
 const onRemovedCard = (id: string) => {
     console.log(id)
 }
-const onEditCard = (vacancy: Vacancy) => {
+const onEditCard = (vacancy: IVacancy) => {
     console.log('111', vacancy)
 }
-const onCreate = (vacancy: Vacancy) => {
+const onCreate = (vacancy: IVacancy) => {
     console.log('4444', vacancy)
 }
 

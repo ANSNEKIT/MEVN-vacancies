@@ -31,7 +31,7 @@
                     <div class="vacancy-card__info">
                         <div class="vacancy-card__company">
                             <h3 class="vacancy-card__company-title">
-                                <RouterLink :to="'/companies/' + link">Иннотех</RouterLink>
+                                <RouterLink :to="'/companies/' + prefix">Иннотех</RouterLink>
                             </h3>
                         </div>
                         <h2 class="vacancy-card__title">
@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import type { VacancyBackend } from '@/entities/vacancy'
+import type { IBVacancy } from '@/entities/vacancy'
 import { computed, ref, type PropType } from 'vue'
 import { RouterLink } from 'vue-router'
 import ModalVacancyForm from '@/components/ModalVacancyForm.vue'
@@ -99,7 +99,7 @@ const props = defineProps({
         required: true,
     },
     vacancy: {
-        type: Object as PropType<VacancyBackend>,
+        type: Object as PropType<IBVacancy>,
         default: () => ({}),
     },
 })
@@ -113,7 +113,7 @@ const showModalEdit = ref(false)
 
 const userProfileImg = computed(() => `https://source.unsplash.com/random/60x60?sig=${props.id}`)
 const name = computed(() => props.vacancy.company.name)
-const link = computed(() => props.vacancy.company.link)
+const prefix = computed(() => props.vacancy.company.prefix)
 const cardImg = computed(() => props.vacancy.cardImg)
 const price = computed(() => {
     const { minPrice, maxPrice } = props.vacancy
