@@ -3,7 +3,7 @@ export interface Vacancy {
     company: {
         src: string
         name: string
-        link: string
+        prefix: string
     }
     name: string
     cardImg: string

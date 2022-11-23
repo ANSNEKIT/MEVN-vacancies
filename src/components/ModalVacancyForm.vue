@@ -39,13 +39,13 @@
             </Field>
 
             <Field
-                name="company.link"
-                v-model="vacancyLocal.company.link"
+                name="company.src"
+                v-model="vacancyLocal.company.src"
                 v-slot="{ value, handleChange, errorMessage }"
             >
                 <b-form-group
                     label-cols="5"
-                    label="Префикс для ссылки на компанию"
+                    label="Ссылка на лого компании"
                     :invalid-feedback="errorMessage"
                 >
                     <b-form-input
@@ -62,13 +62,13 @@
             </Field>
 
             <Field
-                name="company.src"
-                v-model="vacancyLocal.company.src"
+                name="company.prefix"
+                v-model="vacancyLocal.company.prefix"
                 v-slot="{ value, handleChange, errorMessage }"
             >
                 <b-form-group
                     label-cols="5"
-                    label="Ссылка на лого компании"
+                    label="Префикс для ссылки на компанию"
                     :invalid-feedback="errorMessage"
                 >
                     <b-form-input

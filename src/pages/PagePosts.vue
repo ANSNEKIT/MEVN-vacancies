@@ -60,7 +60,7 @@ const vacancy = {
     createdAt: new Date(),
     company: {
         name: 'Test company',
-        link: 'TestCompany',
+        prefix: 'TestCompany',
         src: 'https://source.unsplash.com/random/60x60',
     },
     name: 'Phyton Developer',

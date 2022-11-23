@@ -4,9 +4,9 @@ import { setLocale, object, string, number, boolean } from 'yup'
 export function useVacancyForm() {
     const vacancyLocal = ref({
         company: {
+            src: 'https://source.unsplash.com/random/60x60',
             name: '',
-            src: '',
-            link: 'https://source.unsplash.com/random/60x60',
+            prefix: '',
         },
         name: '',
         cardImg: 'https://dummyimage.com/1300x150/499efa/ffffff&text=Название+вакансии',
@@ -41,7 +41,7 @@ export function useVacancyForm() {
                     .required('Обязательное поле')
                     .trim()
                     .max(40, 'Максимально допустимое значение ${max}'),
-                link: string()
+                prefix: string()
                     .required('Обязательное поле')
                     .trim()
                     .max(20, 'Максимально допустимое значение ${max}'),
@@ -51,7 +51,7 @@ export function useVacancyForm() {
                 .required('Обязательное поле')
                 .trim()
                 .max(50, 'Максимально допустимое значение ${max}'),
-            cardImg: string().trim().url(''),
+            cardImg: string().trim().url('Неверный url. Ссылка должна начинаться с http(s)://'),
             city: string(),
             employmentType: string().required('Обязательное поле'),
             hasRemote: boolean(),
@@ -92,9 +92,9 @@ export function useVacancyForm() {
 
     const clearForm = () => ({
         company: {
-            src: '',
+            src: 'https://source.unsplash.com/random/60x60',
             name: '',
-            link: 'https://source.unsplash.com/random/60x60',
+            prefix: '',
         },
         name: '',
         cardImg: 'https://dummyimage.com/1300x150/499efa/ffffff&text=Название+вакансии',
