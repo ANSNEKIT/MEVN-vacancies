@@ -9,6 +9,10 @@ const router = createRouter({
             name: 'posts',
             component: PageVacancies,
         },
+        {
+            path: '/:pathMatch(.*)*',
+            redirect: '/',
+        },
     ],
 })
 

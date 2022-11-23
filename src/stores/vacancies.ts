@@ -1,13 +1,37 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { IVacancy, IBVacancy } from '@/entities/vacancy'
 import { getVacancies, deleteVacancy, createVacancy, updateVacancy } from '@/service/VacancyService'
 
 export const useVacanciesStore = defineStore('vacancies', () => {
+    const search = ref('')
+    const sort = ref<'' | 'asc' | 'desk'>('')
+
     const vacancies = ref<IBVacancy[]>([])
-    // const getVacancy = computed(
-    //     () => (id: string) => vacancies.value.filter((el) => el._id === id)[0],
-    // )
+
+    const filteredVacancies = computed(() => {
+        let filtered = []
+
+        if (!search.value && !sort.value) {
+            return vacancies.value
+        }
+
+        filtered = vacancies.value.filter((vac) => vac.name.toLowerCase().includes(search.value))
+
+        if (sort.value === 'asc') {
+            filtered.sort((v1, v2) => v1.minPrice - v2.minPrice)
+        }
+
+        if (sort.value === 'desk') {
+            filtered.sort((v1, v2) => v2.minPrice - v1.minPrice)
+        }
+
+        return filtered
+    })
+
+    function onSearch(value: string) {
+        search.value = value.trim().toLowerCase()
+    }
 
     async function fetchVacancies() {
         vacancies.value = await getVacancies()
@@ -39,7 +63,10 @@ export const useVacanciesStore = defineStore('vacancies', () => {
     }
 
     return {
-        vacancies,
+        search,
+        sort,
+        filteredVacancies,
+        onSearch,
         fetchVacancies,
         fetchCreateVacancy,
         fetchUpdateVacancy,

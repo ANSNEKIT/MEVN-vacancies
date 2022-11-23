@@ -1,6 +1,7 @@
+import { number } from 'yup';
 type Callback = (...args: any[]) => void
 
-function throttle(cb: Callback, timeout: number) {
+export function throttle(cb: Callback, timeout: number) {
     let timer: null | ReturnType<typeof setTimeout> = null
 
     return function (...args: any[]) {
@@ -17,10 +18,13 @@ function throttle(cb: Callback, timeout: number) {
     }
 }
 
-export function debounce(el: HTMLInputElement, binding: { value: string; oldValue: string }) {
-    if (binding.value !== binding.oldValue) {
-        el.oninput = throttle(function () {
-            el.dispatchEvent(new Event('change'))
-        }, parseInt(binding.value) || 500)
+export function debounce(cb: Callback, delay: number) {
+    let timer: number | ReturnType<typeof setTimeout> = 0
+
+    return (...args: any[]) => {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+            cb(...args)
+        }, delay)
     }
 }

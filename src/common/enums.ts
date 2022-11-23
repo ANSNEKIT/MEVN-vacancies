@@ -13,6 +13,12 @@ export function useEnums() {
         { value: 'every-day', text: 'Круглосуточно (раб на галерах)' },
         { value: 'hour-in-month', text: 'Час в месяц' },
     ]
+    const sortOptions = [
+        { value: '', text: 'Выберите сортировку' },
+        { value: 'asc', text: 'По возрастанию зарплаты' },
+        { value: 'desk', text: 'По убыванию зарплаты' },
+    ]
+
     function getItemName(val: string, list: Array<{ value: string; text: string }>): string {
         const item = list.find((el) => el.value === val)
         if (item) {
@@ -21,5 +27,5 @@ export function useEnums() {
         return ''
     }
 
-    return { cityOptions, employmentTypeOptions, getItemName }
+    return { cityOptions, employmentTypeOptions, sortOptions, getItemName }
 }
