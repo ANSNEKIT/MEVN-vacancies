@@ -1,4 +1,4 @@
-import PagePosts from '@/pages/PagePosts.vue'
+import PageVacancies from '@/pages/PageVacancies.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -7,7 +7,7 @@ const router = createRouter({
         {
             path: '/',
             name: 'posts',
-            component: PagePosts,
+            component: PageVacancies,
         },
     ],
 })

@@ -19,15 +19,17 @@
 
         <b-container>
             <div class="mb-4 d-flex justify-content-end">
-                <b-button pill variant="primary" size="lg" @click="showModalEdit = true"
+                <b-button pill variant="primary" size="lg" @click="showModalCreate = true"
                     >Создать</b-button
                 >
             </div>
-            <ModalVacancyForm v-model:isShow="showModalEdit" @submitForm="onCreate" />
+            <ModalVacancyForm v-model:is-show="showModalCreate" @submitForm="onCreate" />
         </b-container>
 
         <b-container>
             <VacancyCard
+                v-for="vacancy of vacancies"
+                :key="vacancy._id"
                 :id="vacancy._id"
                 :vacancy="vacancy"
                 class="mb-5"
@@ -53,40 +55,29 @@
 import ModalVacancyForm from '@/components/ModalVacancyForm.vue'
 import VacancyCard from '@/components/VacancyCard.vue'
 import type { IVacancy } from '@/entities/vacancy'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useVacanciesStore } from '@/stores/vacancies'
+import { storeToRefs } from 'pinia'
 
-const vacancy = {
-    _id: '123',
-    createdAt: new Date(),
-    company: {
-        name: 'Test company',
-        prefix: 'TestCompany',
-        src: 'https://source.unsplash.com/random/60x60',
-    },
-    name: 'Phyton Developer',
-    cardImg:
-        'https://dummyimage.com/1300x150/499efa/ffffff&text=Text+asdfljk+ljsadfgjsdgsg+dsldkfj+wejtklk',
-    city: 'msk',
-    employmentType: 'full',
-    hasRemote: false,
-    minPrice: 10000,
-    maxPrice: 15000,
-    description: 'asdfsad sadf sadf jasljss',
-    dateEnd: '2022-11-25',
-    timeEnd: '12:00',
-    dateTimeEnd: new Date('2022-11-22T12:00'),
-}
+const store = useVacanciesStore()
 
-const showModalEdit = ref(false)
+const { vacancies } = storeToRefs(store)
+
+onMounted(async () => {
+    await store.fetchVacancies()
+})
+
+const showModalCreate = ref(false)
 
 const onRemovedCard = (id: string) => {
-    console.log(id)
+    store.fetchDeleteVacancies(id)
+    console.log('delete', id)
 }
-const onEditCard = (vacancy: IVacancy) => {
-    console.log('111', vacancy)
+const onEditCard = (id: string, vacancy: IVacancy) => {
+    store.fetchUpdateVacancy(id, vacancy)
 }
 const onCreate = (vacancy: IVacancy) => {
-    console.log('4444', vacancy)
+    store.fetchCreateVacancy(vacancy)
 }
 
 const selectedSort = ref<string>('')

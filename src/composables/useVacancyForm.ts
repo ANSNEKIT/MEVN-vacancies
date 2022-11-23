@@ -1,10 +1,13 @@
+import type { IBVacancy } from '@/entities/vacancy'
 import { computed, markRaw, ref } from 'vue'
 import { setLocale, object, string, number, boolean } from 'yup'
 
 export function useVacancyForm() {
+    const randomSix = mathRandom(100000)
+
     const vacancyLocal = ref({
         company: {
-            src: 'https://source.unsplash.com/random/60x60',
+            src: `https://source.unsplash.com/random/60x60?sig=${randomSix}`,
             name: '',
             prefix: '',
         },
@@ -70,6 +73,10 @@ export function useVacancyForm() {
         }),
     )
 
+    function mathRandom(max: number) {
+        return Math.floor(Math.random() * max)
+    }
+
     function dateTommorow(): string {
         const date = new Date()
         let dd: number | string = date.getDate() + 1
@@ -90,9 +97,9 @@ export function useVacancyForm() {
             .join('-')
     }
 
-    const clearForm = () => ({
+    const getClearForm = () => ({
         company: {
-            src: 'https://source.unsplash.com/random/60x60',
+            src: `https://source.unsplash.com/random/60x60?sig=${randomSix}`,
             name: '',
             prefix: '',
         },
@@ -108,5 +115,21 @@ export function useVacancyForm() {
         timeEnd: '00:00',
     })
 
-    return { vacancyLocal, dateTimeEnd, schemaVacancy, dateTommorow, dateToday, clearForm }
+    const clearForm = () => {
+        vacancyLocal.value = getClearForm()
+    }
+
+    const editForm = (val: IBVacancy) => {
+        vacancyLocal.value = val
+    }
+
+    return {
+        vacancyLocal,
+        dateTimeEnd,
+        schemaVacancy,
+        dateTommorow,
+        dateToday,
+        editForm,
+        clearForm,
+    }
 }

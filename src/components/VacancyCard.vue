@@ -16,10 +16,10 @@
                     </time>
                 </div>
                 <div class="vacancy-card__flex-wrap">
-                    <RouterLink to="/" class="vacancy-card__icon-link"
+                    <b-link to="/"
                         ><b-img
                             :src="userProfileImg"
-                            :alt="'Логотип компании ' + name"
+                            :alt="'Логотип компании ' + company.name"
                             width="60"
                             height="60"
                             blank-color="blue"
@@ -27,17 +27,19 @@
                             class="vacancy-card__icon"
                         >
                         </b-img
-                    ></RouterLink>
+                    ></b-link>
                     <div class="vacancy-card__info">
                         <div class="vacancy-card__company">
                             <h3 class="vacancy-card__company-title">
-                                <RouterLink :to="'/companies/' + prefix">Иннотех</RouterLink>
+                                <b-link :to="'/companies/' + company.prefix">{{
+                                    company.name
+                                }}</b-link>
                             </h3>
                         </div>
                         <h2 class="vacancy-card__title">
-                            <RouterLink :to="'/vacancies/' + id" class="vacancy-card__title-link">{{
+                            <b-link :to="'/vacancies/' + id" class="vacancy-card__title-link">{{
                                 vacancy.name
-                            }}</RouterLink>
+                            }}</b-link>
                         </h2>
                         <ul class="vacancy-card__meta">
                             <li v-if="vacancy.city" class="vacancy-card__meta-item">
@@ -74,7 +76,7 @@
             v-model:is-show="showModalEdit"
             :vacancy="vacancy"
             :is-edit="true"
-            @submit-form="$emit('editCard', $event)"
+            @submit-form="$emit('editCard', id, $event)"
         />
         <b-modal
             v-model="showRemoveModal"
@@ -88,8 +90,7 @@
 
 <script setup lang="ts">
 import type { IBVacancy } from '@/entities/vacancy'
-import { computed, ref, type PropType } from 'vue'
-import { RouterLink } from 'vue-router'
+import { computed, ref, toRefs, type PropType } from 'vue'
 import ModalVacancyForm from '@/components/ModalVacancyForm.vue'
 import { useEnums } from '@/common/enums'
 
@@ -108,13 +109,12 @@ defineEmits(['removeCard', 'editCard'])
 
 const { cityOptions, employmentTypeOptions, getItemName } = useEnums()
 
+const { company, cardImg } = toRefs(props.vacancy)
+
 const showRemoveModal = ref(false)
 const showModalEdit = ref(false)
 
 const userProfileImg = computed(() => `https://source.unsplash.com/random/60x60?sig=${props.id}`)
-const name = computed(() => props.vacancy.company.name)
-const prefix = computed(() => props.vacancy.company.prefix)
-const cardImg = computed(() => props.vacancy.cardImg)
 const price = computed(() => {
     const { minPrice, maxPrice } = props.vacancy
     if (minPrice && maxPrice) {
@@ -132,23 +132,33 @@ const price = computed(() => {
     return ''
 })
 const dateTimeEnd = computed(() => {
-    let dd: number | string = props.vacancy.dateTimeEnd.getDate()
+    const date = new Date(props.vacancy.dateTimeEnd)
+
+    let dd: number | string = date.getDate()
     if (dd < 10) dd = '0' + dd
 
-    let mm: number | string = props.vacancy.dateTimeEnd.getMonth()
+    let mm: number | string = date.getMonth()
     if (mm < 10) mm = '0' + mm
 
-    const yyyy = props.vacancy.dateTimeEnd.getFullYear()
+    const yyyy = date.getFullYear()
 
-    let hours: number | string = props.vacancy.dateTimeEnd.getHours()
+    let hours: number | string = date.getHours()
     if (hours < 10) hours = '0' + hours
 
-    let minutes: number | string = props.vacancy.dateTimeEnd.getMinutes()
+    let minutes: number | string = date.getMinutes()
     if (minutes < 10) minutes = '0' + minutes
 
     return `${dd}-${mm}-${yyyy} ${hours}:${minutes}`
 })
-const createdAt = computed(() => props.vacancy.createdAt)
+const createdAt = computed(() => {
+    const date = new Date(props.vacancy.createdAt)
+
+    return date.toLocaleDateString('ru', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -166,12 +176,9 @@ const createdAt = computed(() => props.vacancy.createdAt)
         float: right;
     }
 
-    &__icon-link {
-        margin-right: 20px;
-    }
-
     &__icon {
         border-radius: 1000px;
+        margin-right: 20px;
     }
 
     &__title {

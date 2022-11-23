@@ -13,7 +13,8 @@
         <Form
             :initial-values="vacancyLocal"
             :validation-schema="schemaVacancy"
-            @submit="handleSubmit"
+            @submit="onSubmit"
+            @reset="onReset"
         >
             <Field
                 name="company.name"
@@ -43,16 +44,12 @@
                 v-model="vacancyLocal.company.src"
                 v-slot="{ value, handleChange, errorMessage }"
             >
-                <b-form-group
-                    label-cols="5"
-                    label="Ссылка на лого компании"
-                    :invalid-feedback="errorMessage"
-                >
+                <b-form-group label="Ссылка на лого компании" :invalid-feedback="errorMessage">
                     <b-form-input
                         type="text"
                         :model-value="value"
                         :lazy="true"
-                        placeholder="my-company"
+                        placeholder="https://link.li/smile-logo.png"
                         maxLength="10"
                         required
                         @update:modelValue="handleChange"
@@ -75,7 +72,7 @@
                         type="url"
                         :model-value="value"
                         :lazy="true"
-                        placeholder="https://link.li/smile-logo.png"
+                        placeholder="my-company"
                         required
                         @update:modelValue="handleChange"
                     >
@@ -110,7 +107,7 @@
                 v-model="vacancyLocal.cardImg"
                 v-slot="{ value, handleChange, errorMessage }"
             >
-                <b-form-group label-cols="5" label="Фото карточки" :invalid-feedback="errorMessage">
+                <b-form-group label="Фото карточки" :invalid-feedback="errorMessage">
                     <b-form-input
                         type="url"
                         :model-value="value"
@@ -273,7 +270,9 @@
             </Field>
 
             <div class="mt-3 d-flex gap-3">
-                <b-button variant="outline-secondary" @click="onCancel">Отмена</b-button>
+                <b-button variant="outline-secondary" type="reset" @click="onReset"
+                    >Отмена</b-button
+                >
                 <b-button type="submit" variant="primary">{{
                     isEdit ? 'Сохранить' : 'Создать'
                 }}</b-button>
@@ -283,16 +282,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Vacancy, VacancyBackend } from '@/entities/vacancy'
+import type { IVacancy, IBVacancy } from '@/entities/vacancy'
 import { BFormInput } from 'bootstrap-vue-3'
 import { computed, onMounted, type PropType } from 'vue'
 import { Form, Field } from 'vee-validate'
 import { useEnums } from '@/common/enums'
-import { useVacancyForm } from '@/composables/vacancyForm'
+import { useVacancyForm } from '@/composables/useVacancyForm'
 
 const props = defineProps({
     vacancy: {
-        type: Object as PropType<VacancyBackend>,
+        type: Object as PropType<IBVacancy>,
         default: () => ({}),
     },
     isEdit: {
@@ -308,7 +307,7 @@ const props = defineProps({
 const emits = defineEmits(['update:isShow', 'submitForm'])
 
 const { cityOptions, employmentTypeOptions } = useEnums()
-const { vacancyLocal, dateTimeEnd, schemaVacancy, dateTommorow, dateToday, clearForm } =
+const { vacancyLocal, dateTimeEnd, schemaVacancy, dateTommorow, dateToday, editForm, clearForm } =
     useVacancyForm()
 
 onMounted(() => {
@@ -325,28 +324,30 @@ const modalTitle = computed(() => {
     return 'Создать вакансию'
 })
 
-const resetModal = () => {
+const resetModal = async () => {
     if (props.isEdit) {
-        vacancyLocal.value = props.vacancy
+        editForm(props.vacancy)
     } else {
-        vacancyLocal.value = clearForm()
+        clearForm()
     }
 }
 
-const onCancel = () => {
-    emits('update:isShow', false)
+const onReset = async () => {
+    clearForm()
 }
 
-const handleSubmit = (values: object) => {
+const onSubmit = (values: object) => {
     const newShema = schemaVacancy.cast(values)
 
     const formValues = {
-        ...(newShema as Vacancy),
+        ...(newShema as IVacancy),
         dateTimeEnd: dateTimeEnd.value,
     }
 
     emits('submitForm', formValues)
     emits('update:isShow', false)
+
+    onReset()
 }
 </script>
 
