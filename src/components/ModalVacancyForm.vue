@@ -39,8 +39,8 @@
             </Field>
 
             <Field
-                name="company.src"
-                v-model="vacancyLocal.company.src"
+                name="company.link"
+                v-model="vacancyLocal.company.link"
                 v-slot="{ value, handleChange, errorMessage }"
             >
                 <b-form-group
@@ -62,8 +62,8 @@
             </Field>
 
             <Field
-                name="company.link"
-                v-model="vacancyLocal.company.link"
+                name="company.src"
+                v-model="vacancyLocal.company.src"
                 v-slot="{ value, handleChange, errorMessage }"
             >
                 <b-form-group
@@ -98,9 +98,28 @@
                         :model-value="value"
                         :lazy="true"
                         maxLength="50"
+                        placeholder="Название вакансии"
                         required
                         @update:modelValue="handleChange"
                     ></b-form-input>
+                </b-form-group>
+            </Field>
+
+            <Field
+                name="cardImg"
+                v-model="vacancyLocal.cardImg"
+                v-slot="{ value, handleChange, errorMessage }"
+            >
+                <b-form-group label-cols="5" label="Фото карточки" :invalid-feedback="errorMessage">
+                    <b-form-input
+                        type="url"
+                        :model-value="value"
+                        :lazy="true"
+                        placeholder="https://dummyimage.com/1300x150/499efa/ffffff&text=Название+вакансии"
+                        required
+                        @update:modelValue="handleChange"
+                    >
+                    </b-form-input>
                 </b-form-group>
             </Field>
 
@@ -264,15 +283,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Vacancy, VacancyFull } from '@/entities/vacancy'
+import type { Vacancy, VacancyBackend } from '@/entities/vacancy'
 import { BFormInput } from 'bootstrap-vue-3'
-import { computed, markRaw, onMounted, ref, type PropType } from 'vue'
-import { setLocale, object, string, number, boolean } from 'yup'
+import { computed, onMounted, type PropType } from 'vue'
 import { Form, Field } from 'vee-validate'
+import { useEnums } from '@/common/enums'
+import { useVacancyForm } from '@/composables/vacancyForm'
 
 const props = defineProps({
     vacancy: {
-        type: Object as PropType<Vacancy>,
+        type: Object as PropType<VacancyBackend>,
         default: () => ({}),
     },
     isEdit: {
@@ -287,93 +307,9 @@ const props = defineProps({
 
 const emits = defineEmits(['update:isShow', 'submitForm'])
 
-setLocale({
-    mixed: {
-        default: 'Поле заполнено некорректно',
-        notType: 'Неверный формат',
-    },
-})
-
-const dateTommorow = () => {
-    const date = new Date()
-    let dd: number | string = date.getDate() + 1
-    if (dd < 10) dd = '0' + dd
-
-    let mm: number | string = date.getMonth() + 1
-    if (mm < 10) mm = '0' + mm
-
-    let yyyy: number | string = date.getFullYear()
-
-    return `${yyyy}-${mm}-${dd}`
-}
-
-const schemaVacancy = markRaw(
-    object({
-        company: object({
-            name: string().required('Обязательное поле').trim().max(40),
-            src: string().required('Обязательное поле').trim().max(20),
-            link: string().trim().url('Неверный url. Ссылка должна начинаться с http(s)://'),
-        }),
-        name: string().required('Обязательное поле').trim().max(50),
-        city: string(),
-        employmentType: string().required('Обязательное поле'),
-        hasRemote: boolean(),
-        minPrice: number()
-            .min(0, 'Минимально допустимое значение ${min}')
-            .max(1_000_000, 'Максимально допустимое значение ${max}'),
-        maxPrice: number()
-            .min(0, 'Минимально допустимое значение ${min}')
-            .max(1_000_000, 'Максимально допустимое значение ${max}'),
-        description: string().required('Обязательное поле').trim().max(500),
-        dateEnd: string().default(() => dateTommorow()),
-        timeEnd: string().required('Обязательное поле'),
-    }),
-)
-
-const dateToday = (str: string) => {
-    return str
-        .split('-')
-        .map((el, i) => (i === 2 ? String(Number(el) - 1) : el))
-        .join('-')
-}
-
-const vacancyLocal = ref({
-    company: {
-        name: '',
-        src: '',
-        link: 'https://source.unsplash.com/random/60x60',
-    },
-    name: '',
-    city: '',
-    employmentType: '',
-    hasRemote: false,
-    minPrice: 0,
-    maxPrice: 0,
-    description: '',
-    dateEnd: dateTommorow(),
-    timeEnd: '00:00',
-})
-
-const dateTimeEnd = computed(() => {
-    const date = `${vacancyLocal.value.dateEnd}T${vacancyLocal.value.timeEnd}`
-
-    return new Date(date)
-})
-
-const cityOptions = [
-    { value: '', text: 'Выберите город' },
-    { value: 'Moscow', text: 'Москва' },
-    { value: 'Spb', text: 'Санкт-Петербург' },
-    { value: 'Ekb', text: 'Екатеринбург' },
-    { value: 'Nyagan', text: 'Нягань' },
-]
-const employmentTypeOptions = [
-    { value: '', text: 'Выберите тип' },
-    { value: 'full', text: 'Полный день' },
-    { value: 'part', text: 'Неполный день' },
-    { value: 'every-day', text: 'Круглосуточно (раб на галерах)' },
-    { value: 'hour-in-month', text: 'Час в месяц' },
-]
+const { cityOptions, employmentTypeOptions } = useEnums()
+const { vacancyLocal, dateTimeEnd, schemaVacancy, dateTommorow, dateToday, clearForm } =
+    useVacancyForm()
 
 onMounted(() => {
     if (props.isEdit) {
@@ -387,23 +323,6 @@ const modalTitle = computed(() => {
     }
 
     return 'Создать вакансию'
-})
-
-const clearForm = () => ({
-    company: {
-        src: '',
-        name: '',
-        link: 'https://source.unsplash.com/random/60x60',
-    },
-    name: '',
-    city: '',
-    employmentType: '',
-    hasRemote: false,
-    minPrice: 0,
-    maxPrice: 0,
-    description: '',
-    dateEnd: dateTommorow(),
-    timeEnd: '00:00',
 })
 
 const resetModal = () => {
@@ -421,7 +340,7 @@ const onCancel = () => {
 const handleSubmit = (values: object) => {
     const newShema = schemaVacancy.cast(values)
 
-    const formValues: VacancyFull = {
+    const formValues = {
         ...(newShema as Vacancy),
         dateTimeEnd: dateTimeEnd.value,
     }

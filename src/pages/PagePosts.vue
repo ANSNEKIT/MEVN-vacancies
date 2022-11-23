@@ -28,7 +28,7 @@
 
         <b-container>
             <VacancyCard
-                id="1"
+                :id="vacancy._id"
                 :vacancy="vacancy"
                 class="mb-5"
                 @edit-card="onEditCard"
@@ -56,15 +56,19 @@ import type { Vacancy } from '@/entities/vacancy'
 import { ref } from 'vue'
 
 const vacancy = {
+    _id: '123',
+    createdAt: new Date(),
     company: {
         name: 'Test company',
         link: 'TestCompany',
-        src: 'https://dummyimage.com/1300x150/499efa/ffffff&text=Text+asdfljk+ljsadfgjsdgsg+dsldkfj+wejtklk',
+        src: 'https://source.unsplash.com/random/60x60',
     },
     name: 'Phyton Developer',
-    city: 'Москва',
-    employmentType: 'Полный день',
-    hasRemote: true,
+    cardImg:
+        'https://dummyimage.com/1300x150/499efa/ffffff&text=Text+asdfljk+ljsadfgjsdgsg+dsldkfj+wejtklk',
+    city: 'msk',
+    employmentType: 'full',
+    hasRemote: false,
     minPrice: 10000,
     maxPrice: 15000,
     description: 'asdfsad sadf sadf jasljss',
@@ -79,7 +83,7 @@ const onRemovedCard = (id: string) => {
     console.log(id)
 }
 const onEditCard = (vacancy: Vacancy) => {
-    console.log(vacancy)
+    console.log('111', vacancy)
 }
 const onCreate = (vacancy: Vacancy) => {
     console.log('4444', vacancy)

@@ -1,10 +1,12 @@
 export interface Vacancy {
+    _id: string
     company: {
         src: string
         name: string
         link: string
     }
     name: string
+    cardImg: string
     city: string
     employmentType: string
     hasRemote: boolean
@@ -13,8 +15,10 @@ export interface Vacancy {
     description: string
     dateEnd: string
     timeEnd: string
+    dateTimeEnd?: Date
 }
 
-export interface VacancyFull extends Vacancy {
+export interface VacancyBackend extends Vacancy {
+    createdAt: Date
     dateTimeEnd: Date
 }
