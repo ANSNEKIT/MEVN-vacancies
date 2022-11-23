@@ -39,10 +39,10 @@
                 </div>
 
                 <div class="flex-grow-1">
-                    <h2 v-if="!filteredVacancies.length" class="mb-5">Вакансии не найдены</h2>
+                    <h2 v-if="!paginatedVacancies.length" class="mb-5">Вакансии не найдены</h2>
                     <VacancyCard
                         v-else
-                        v-for="vacancy of filteredVacancies"
+                        v-for="vacancy of paginatedVacancies"
                         :key="vacancy._id"
                         :id="vacancy._id"
                         :vacancy="vacancy"
@@ -77,7 +77,7 @@ import { debounce } from '@/composables/debounce'
 
 const store = useVacanciesStore()
 
-const { filteredVacancies, search, sort } = storeToRefs(store)
+const { paginatedVacancies, currentPage, perPage, maxPages, search, sort } = storeToRefs(store)
 
 const { sortOptions } = useEnums()
 
@@ -100,9 +100,9 @@ const onCreate = (vacancy: IVacancy) => {
     store.fetchCreateVacancy(vacancy)
 }
 
-const currentPage = ref(3)
-const maxPages = ref(5)
-const perPage = ref(1)
+// const currentPage = ref(1)
+// const perPage = ref(3)
+// const maxPages = computed(() => filteredVacancies.value.length)
 </script>
 
 <style lang="scss" scoped>

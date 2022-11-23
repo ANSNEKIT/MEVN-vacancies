@@ -4,10 +4,9 @@ import type { IVacancy, IBVacancy } from '@/entities/vacancy'
 import { getVacancies, deleteVacancy, createVacancy, updateVacancy } from '@/service/VacancyService'
 
 export const useVacanciesStore = defineStore('vacancies', () => {
+    const vacancies = ref<IBVacancy[]>([])
     const search = ref('')
     const sort = ref<'' | 'asc' | 'desk'>('')
-
-    const vacancies = ref<IBVacancy[]>([])
 
     const filteredVacancies = computed(() => {
         let filtered = []
@@ -28,6 +27,16 @@ export const useVacanciesStore = defineStore('vacancies', () => {
 
         return filtered
     })
+
+    const currentPage = ref(1)
+    const perPage = ref(3)
+    const maxPages = computed(() => filteredVacancies.value.length)
+    const _start = computed(() => (currentPage.value - 1) * perPage.value)
+    const _end = computed(() => currentPage.value * perPage.value)
+
+    const paginatedVacancies = computed(() =>
+        filteredVacancies.value.slice(_start.value, _end.value),
+    )
 
     function onSearch(value: string) {
         search.value = value.trim().toLowerCase()
@@ -66,6 +75,10 @@ export const useVacanciesStore = defineStore('vacancies', () => {
         search,
         sort,
         filteredVacancies,
+        paginatedVacancies,
+        currentPage,
+        perPage,
+        maxPages,
         onSearch,
         fetchVacancies,
         fetchCreateVacancy,
