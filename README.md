@@ -1,46 +1,81 @@
-# MEVN-posts
+# Vue 3 + TypeScript + Vite + Mongoose + Express
 
-This template should help get you started developing with Vue 3 in Vite.
+MEVN стек (Mongoose + Express.js + Vue 3 + Node.js)
 
-## Recommended IDE Setup
+Store - Pinia
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+UI - Vue-bootstrap-3
 
-## Type Support for `.vue` Imports in TS
+Валидация - Vee-validate + Yup
+Валидация backend - express-validator
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+В настоящий момент проект еще находится в разработке. Со временем будут добавляться новые фичи и будет проводиться рефакторинг
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+[Ссылка на демо](https://ansnekit.github.io/)
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
 
-## Customize configuration
+## Особенности
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Composition API
+- Использованы типы Typecsript. Создана entity для вакансии
+- Сложная логика компонентов вынесена в функции composables для сохранения чистоты кода
+- События для фильтрации вакансий обернуты в debounce функцию
+- Валидация форм на фронте
+- Валидация форм на бекенде
+- Navbar подключен через Layout
+- Настроен базовый роутинг
 
-## Project Setup
+## Верстка
 
-```sh
-npm install
-```
+Создана валидная, адаптивная, кроссбраузерная, доступная верстка с использованием UI bootstrap-vue-3
 
-### Compile and Hot-Reload for Development
+## Компоненты Frontend приложения
 
-```sh
-npm run dev
-```
+- TheNavbar. Компонент оборачивает верстку bootstrap копонентов для навбара
+- VacancyCard. Карточка вакансии
+- ModalVacancyForm. Модальное окно с формой
 
-### Type-Check, Compile and Minify for Production
+# Backend
 
-```sh
-npm run build
-```
+- Типизация проекта на Typescript
+- Подключена БД Mongose
+- Создана schema и модель Vacancy
+- Создан CRUD роутинг для вакансии
+- Добавлена валидация express-validator через middleware
 
-### Lint with [ESLint](https://eslint.org/)
+### Фильтрация и сортировка вакансий
 
-```sh
-npm run lint
-```
+- При вводе в поиск названия вакансии происходит поиск. Если ничего не найдено, выдаст сообщение
+- Выбор сортировки по возрастанию и по убыванию
+
+### Пагинация
+
+- По 3 вакансии на одной странице
+
+---
+### Node - 18.12.0
+
+### Vite - 3.1.8
+
+### NPM - 8.19.2
+---
+## Запуск и сборка проекта
+
+Установка зависимостей
+
+1. `npm i`
+2. `cd server`
+3. `npm i`
+
+Запуск dev сервера front и backend
+
+1. `npm run dev`
+2. `npm run server`
+
+Запуск build
+
+`npm run build`
+
+Запуск lint
+
+`npm run lint`
