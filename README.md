@@ -69,6 +69,8 @@ UI - Vue-bootstrap-3
 
 Запуск dev сервера front и backend
 
+Перед запуском необходимо в папке server вставить файл .env из .env.template
+
 1. `npm run dev`
 2. `npm run server`
 

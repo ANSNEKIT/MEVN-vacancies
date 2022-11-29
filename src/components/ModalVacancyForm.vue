@@ -287,7 +287,7 @@ import { BFormInput } from 'bootstrap-vue-3'
 import { computed, onMounted, type PropType } from 'vue'
 import { Form, Field } from 'vee-validate'
 import { useEnums } from '@/common/enums'
-import { useVacancyForm } from '@/composables/useVacancyForm'
+import { useVacancyForm } from '@/composables/vacancyForm'
 
 const props = defineProps({
     vacancy: {

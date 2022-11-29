@@ -39,17 +39,23 @@
                 </div>
 
                 <div class="flex-grow-1">
-                    <h2 v-if="!paginatedVacancies.length" class="mb-5">Вакансии не найдены</h2>
-                    <VacancyCard
-                        v-else
-                        v-for="vacancy of paginatedVacancies"
-                        :key="vacancy._id"
-                        :id="vacancy._id"
-                        :vacancy="vacancy"
-                        class="mb-5"
-                        @edit-card="onEditCard"
-                        @remove-card="onRemovedCard"
-                    />
+                    <h2 v-if="isLoading" class="mb-5">Загрузка...</h2>
+
+                    <h2 v-if="!isLoading && !paginatedVacancies.length" class="mb-5">
+                        Вакансии не найдены
+                    </h2>
+
+                    <template v-if="paginatedVacancies.length && !isLoading">
+                        <VacancyCard
+                            v-for="vacancy of paginatedVacancies"
+                            :key="vacancy._id"
+                            :id="vacancy._id"
+                            :vacancy="vacancy"
+                            class="mb-5"
+                            @edit-card="onEditCard"
+                            @remove-card="onRemovedCard"
+                        />
+                    </template>
                 </div>
 
                 <b-pagination
@@ -77,7 +83,8 @@ import { debounce } from '@/composables/debounce'
 
 const store = useVacanciesStore()
 
-const { paginatedVacancies, currentPage, perPage, maxPages, search, sort } = storeToRefs(store)
+const { paginatedVacancies, currentPage, perPage, maxPages, search, sort, isLoading } =
+    storeToRefs(store)
 
 const { sortOptions } = useEnums()
 
@@ -99,10 +106,6 @@ const onEditCard = (id: string, vacancy: IVacancy) => {
 const onCreate = (vacancy: IVacancy) => {
     store.fetchCreateVacancy(vacancy)
 }
-
-// const currentPage = ref(1)
-// const perPage = ref(3)
-// const maxPages = computed(() => filteredVacancies.value.length)
 </script>
 
 <style lang="scss" scoped>

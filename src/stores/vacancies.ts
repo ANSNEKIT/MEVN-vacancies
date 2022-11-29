@@ -7,51 +7,55 @@ export const useVacanciesStore = defineStore('vacancies', () => {
     const vacancies = ref<IBVacancy[]>([])
     const search = ref('')
     const sort = ref<'' | 'asc' | 'desk'>('')
+    const isLoading = ref(false)
 
-    const filteredVacancies = computed(() => {
-        let filtered = []
-
+    const _filteredVacancies = computed(() => {
         if (!search.value && !sort.value) {
             return vacancies.value
         }
 
-        filtered = vacancies.value.filter((vac) => vac.name.toLowerCase().includes(search.value))
+        return vacancies.value.filter((vac) => vac.name.toLowerCase().includes(search.value))
+    })
 
+    const sortedVacancies = computed(() => {
         if (sort.value === 'asc') {
-            filtered.sort((v1, v2) => v1.minPrice - v2.minPrice)
+            return _filteredVacancies.value.sort((v1, v2) => v1.minPrice - v2.minPrice)
         }
 
         if (sort.value === 'desk') {
-            filtered.sort((v1, v2) => v2.minPrice - v1.minPrice)
+            return _filteredVacancies.value.sort((v1, v2) => v2.minPrice - v1.minPrice)
         }
 
-        return filtered
+        return _filteredVacancies.value
     })
 
     const currentPage = ref(1)
     const perPage = ref(3)
-    const maxPages = computed(() => filteredVacancies.value.length)
+    const maxPages = computed(() => _filteredVacancies.value.length)
     const _start = computed(() => (currentPage.value - 1) * perPage.value)
     const _end = computed(() => currentPage.value * perPage.value)
 
-    const paginatedVacancies = computed(() =>
-        filteredVacancies.value.slice(_start.value, _end.value),
-    )
+    const paginatedVacancies = computed(() => sortedVacancies.value.slice(_start.value, _end.value))
 
     function onSearch(value: string) {
         search.value = value.trim().toLowerCase()
     }
 
     async function fetchVacancies() {
+        isLoading.value = true
         vacancies.value = await getVacancies()
+        isLoading.value = false
     }
 
     async function fetchCreateVacancy(vacancy: IVacancy) {
+        isLoading.value = true
         const newVac = await createVacancy(vacancy)
         vacancies.value.push(newVac)
+        isLoading.value = false
     }
 
     async function fetchUpdateVacancy(id: string, vacancy: IVacancy) {
+        isLoading.value = true
         const vacancyIndex = vacancies.value.findIndex((vacancy) => vacancy._id === id)
 
         if (vacancyIndex !== -1) {
@@ -59,9 +63,11 @@ export const useVacanciesStore = defineStore('vacancies', () => {
 
             vacancies.value.splice(vacancyIndex, 1, newVac)
         }
+        isLoading.value = false
     }
 
     async function fetchDeleteVacancies(id: string) {
+        isLoading.value = true
         const vacancyIndex = vacancies.value.findIndex((vacancy) => vacancy._id === id)
 
         if (vacancyIndex !== -1) {
@@ -69,16 +75,17 @@ export const useVacanciesStore = defineStore('vacancies', () => {
 
             vacancies.value.splice(vacancyIndex, 1)
         }
+        isLoading.value = false
     }
 
     return {
         search,
         sort,
-        filteredVacancies,
         paginatedVacancies,
         currentPage,
         perPage,
         maxPages,
+        isLoading,
         onSearch,
         fetchVacancies,
         fetchCreateVacancy,
